@@ -1,0 +1,35 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: relay-postgres
+    environment:
+      POSTGRES_USER: relay
+      POSTGRES_PASSWORD: relay123
+      POSTGRES_DB: relay_db
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./migrations:/docker-entrypoint-initdb.d
+    networks:
+      - relay-network
+
+  redis:
+    image: redis:7-alpine
+    container_name: relay-redis
+    ports:
+      - "6380:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - relay-network
+
+volumes:
+  postgres_data:
+  redis_data:
+
+networks:
+  relay-network:
+    driver: bridge
